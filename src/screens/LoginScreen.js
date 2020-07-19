@@ -1,11 +1,5 @@
 import React, {Component} from 'react';
-import {
-  StatusBar,
-  StyleSheet,
-  View,
-  KeyboardAvoidingView,
-  Text,
-} from 'react-native';
+import {StatusBar, StyleSheet, View, Text} from 'react-native';
 import {theme} from '../core/theme';
 import TextInput from '../components/TextInput';
 import Button from '../components/Button';

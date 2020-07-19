@@ -10,6 +10,10 @@ import Home from '../screens/HomeScreen';
 const Stack = createStackNavigator();
 
 export default class Navigation extends Component {
+  constructor() {
+    super();
+    this.isNight = new Date().getHours() >= 18 ? true : false;
+  }
   render() {
     return (
       <NavigationContainer>
@@ -17,7 +21,9 @@ export default class Navigation extends Component {
           initialRouteName="Login"
           screenOptions={{
             headerStyle: {
-              backgroundColor: theme.colors.purpel[900],
+              backgroundColor: this.isNight
+                ? theme.colors.gray[900]
+                : theme.colors.orange[900],
             },
             headerTintColor: theme.colors.white,
             headerTitleStyle: {

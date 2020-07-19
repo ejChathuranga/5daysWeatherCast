@@ -1,4 +1,30 @@
-export const theme = {
+import {sun, moon} from '../assets';
+export const background = () => {
+  return new Date().getHours() >= 18 ? night : day;
+};
+
+export const dayStateIcon = () => {
+  return new Date().getHours() >= 18 ? moon : sun;
+};
+
+const night = [
+  '#212121',
+  '#616161',
+  '#757575',
+  // theme.colors.gray[900],
+  // theme.colors.gray[700],
+  // theme.colors.gray[600],
+];
+const day = [
+  '#e54304',
+  '#f47100',
+  '#fa8100',
+  // theme.colors.orange[900],
+  // theme.colors.orange[700],
+  // theme.colors.orange[600],
+];
+
+const theme = {
   colors: {
     white: '#FFF',
     blue: {
@@ -75,3 +101,5 @@ export const theme = {
     },
   },
 };
+
+export {theme};

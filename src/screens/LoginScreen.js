@@ -31,8 +31,7 @@ export default class LoginScreen extends Component {
   };
 
   login = () => {
-    // let e = emailValidator(this.state.email);
-    let e = '';
+    let e = emailValidator(this.state.email);
     let p = passwordValidator(this.state.password);
 
     this.setState({

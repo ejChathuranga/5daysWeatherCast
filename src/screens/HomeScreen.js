@@ -7,9 +7,12 @@ import {
   ActivityIndicator,
   Image,
 } from 'react-native';
+import {Thumbnail} from 'native-base';
 import LinearGradient from 'react-native-linear-gradient';
 import {theme, background, dayStateIcon} from '../core/theme';
+import {dataManupulate} from '../core/utils';
 import ApiRequest from '../api/ApiRequest';
+import {FlatList} from 'react-native-gesture-handler';
 
 export default class HomeScreen extends Component {
   constructor() {
@@ -19,12 +22,7 @@ export default class HomeScreen extends Component {
       city: {},
       list: [],
     };
-    this.dayArray = [];
-    this.day1Array = [];
-    this.day2Array = [];
-    this.day3Array = [];
-    this.day4Array = [];
-    this.day5Array = [];
+    this.dataList = [];
   }
 
   componentDidMount() {
@@ -33,46 +31,35 @@ export default class HomeScreen extends Component {
       .then((res) => {
         this.setState({isLoading: false});
         if (res.cod == '200') {
-          // console.log(res.city);
-          let list = res.list;
-          if (list && list.length > 0) {
-            list.map((item) => {
-              let today = new Date().getDate();
+          this.dataList = dataManupulate(res.list, res.city.timezone);
 
-              let itemDate = new Date(
-                item.dt * 1000 - res.city.timezone * 1000,
-              ).getDate();
-
-              if (today == itemDate) {
-                this.dayArray.push(item);
-              } else if (itemDate == today + 1) {
-                this.day1Array.push(item);
-              } else if (itemDate == today + 2) {
-                this.day2Array.push(item);
-              } else if (itemDate == today + 3) {
-                this.day3Array.push(item);
-              } else if (itemDate == today + 4) {
-                this.day4Array.push(item);
-              } else if (itemDate == today + 5) {
-                this.day5Array.push(item);
-              }
-            });
-          }
           this.setState({city: res.city});
         }
       })
       .catch((err) => {
         this.setState({isLoading: false});
-        // alert(err.data.message);
+        alert(err.data.message);
         console.log(err);
       });
+  }
+  getDayName(dateStr, locale) {
+    var date = new Date(dateStr);
+    return date.toLocaleDateString(locale, {weekday: 'long'});
   }
 
   render() {
     if (this.state.isLoading) {
       return (
         <View style={styles.preloader}>
-          <ActivityIndicator size="large" color={theme.colors.purpel[500]} />
+          <LinearGradient
+            colors={background()}
+            style={{flex: 1, width: '100%', justifyContent: 'center'}}>
+            <StatusBar
+              barStyle="light-content"
+              backgroundColor={background()[0]}
+            />
+            <ActivityIndicator size="large" color={theme.colors.white} />
+          </LinearGradient>
         </View>
       );
     }
@@ -89,19 +76,44 @@ export default class HomeScreen extends Component {
               <Text style={styles.cityName}>{this.state.city.name}</Text>
               <Text style={styles.country}>{this.state.city.country}</Text>
             </View>
-            <Image
-              source={dayStateIcon()}
-              style={{height: 150, width: 150, alignSelf: 'center', margin: 20}}
-            />
-          </View>
-          <View
-            style={{
-              flex: 3,
-              justifyContent: 'center',
-              borderWidth: 2,
-              borderColor: 'white',
-            }}>
-            <Text> Home screen </Text>
+            <Image source={dayStateIcon()} style={styles.dayStateIcon} />
+            <View style={{flex: 1, margin: 5}}>
+              <FlatList
+                nestedScrollEnabled={true}
+                data={this.dataList}
+                keyExtractor={(item, index) => {
+                  return item.id;
+                }}
+                renderItem={({item}) => (
+                  <View style={{marginEnd: 20}}>
+                    <View style={styles.flatMainText}>
+                      <Text style={styles.flatMainTextDay}>{item.day}</Text>
+                      <Text style={styles.flatMainTextDate}>{item.date}</Text>
+                    </View>
+
+                    <View>
+                      <FlatList
+                        horizontal
+                        style={styles.flatSub}
+                        data={item.data}
+                        keyExtractor={(item, index) => {
+                          return item.id;
+                        }}
+                        renderItem={({item}) => (
+                          <View style={styles.flatSubMain}>
+                            <Text style={styles.weatherTime}>{item.time}</Text>
+                            <Thumbnail source={{uri: item.weather[0].icon}} />
+                            <Text style={styles.weatherTemp}>
+                              {item.main.temp}º
+                            </Text>
+                          </View>
+                        )}
+                      />
+                    </View>
+                  </View>
+                )}
+              />
+            </View>
           </View>
         </LinearGradient>
       </View>
@@ -136,5 +148,40 @@ const styles = StyleSheet.create({
     color: theme.colors.white,
     textAlignVertical: 'bottom',
     bottom: 10,
+  },
+  dayStateIcon: {height: 150, width: 150, alignSelf: 'center', margin: 20},
+  weatherTime: {
+    fontSize: 12,
+    color: theme.colors.white,
+    width: '100%',
+    textAlign: 'center',
+  },
+  weatherTemp: {
+    fontSize: 13,
+    fontWeight: 'bold',
+    color: theme.colors.white,
+    width: '100%',
+    textAlign: 'center',
+  },
+  flatMainText: {
+    flexDirection: 'row',
+    marginTop: 10,
+    marginBottom: 10,
+  },
+  flatMainTextDay: {
+    fontWeight: 'bold',
+    color: theme.colors.white,
+    marginEnd: 20,
+  },
+  flatMainTextDate: {
+    fontSize: 10,
+    color: theme.colors.white,
+    textAlignVertical: 'bottom',
+    bottom: 0,
+  },
+  flatSub: {marginBottom: 30, marginTop: 8, alignSelf: 'flex-start'},
+  flatSubMain: {
+    paddingEnd: 40,
+    justifyContent: 'center',
   },
 });

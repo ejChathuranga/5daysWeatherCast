@@ -12,10 +12,15 @@ Example app to demonstrate API example on React Native
 - basic-authentication using email validation and any password
 - fetch data from [openweathermap](https://openweathermap.org/) 
 - 5 days weather casting from today
+- Will change the color theme according day and night
 
 ### Libs
 - axios (for https request)
 - moment (for manupulate dates)
 - native-base (for UI)
+
+#### Screenshots
+
+![Home](https://github.com/ejChathuranga/5daysWeatherCast/blob/master/screens/screen.jpeg)
 
 

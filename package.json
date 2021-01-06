@@ -14,7 +14,7 @@
     "@react-native-community/toolbar-android": "^0.1.0-rc.2",
     "@react-navigation/native": "^5.7.0",
     "@react-navigation/stack": "^5.7.0",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "metro-react-native-babel-transformer": "^0.60.0",
     "moment": "^2.27.0",
     "native-base": "^2.13.12",
